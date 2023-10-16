@@ -1,0 +1,343 @@
+[gd_scene load_steps=13 format=3 uid="uid://bnx8ycqy0me6i"]
+
+[ext_resource type="Texture2D" uid="uid://dr3ccdo6p0v0y" path="res://addons/Wave Function Collapse/sprite_UpArrow.tres" id="1_ebf7i"]
+[ext_resource type="Script" path="res://addons/Wave Function Collapse/TilesList.cs" id="1_y7kpu"]
+[ext_resource type="Texture2D" uid="uid://b6d67c8baap06" path="res://addons/Wave Function Collapse/sprite_LeftArrow.tres" id="2_g1fe2"]
+[ext_resource type="Texture2D" uid="uid://bwlkt4rwqbtqu" path="res://addons/Wave Function Collapse/sprite_RightArrow.tres" id="3_m4u2y"]
+[ext_resource type="Texture2D" uid="uid://dy3rt3v7h70ug" path="res://addons/Wave Function Collapse/sprite_DownArrow.tres" id="4_yhd7u"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3lwhi"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eckdh"]
+bg_color = Color(0.156863, 0.176471, 0.211765, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.128906, 0.148438, 0.179688, 1)
+corner_radius_top_left = 13
+corner_radius_top_right = 13
+corner_radius_bottom_right = 13
+corner_radius_bottom_left = 13
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yqc60"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sadsu"]
+bg_color = Color(0.128906, 0.148438, 0.179688, 1)
+border_color = Color(0.0627451, 0.0627451, 0.0627451, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4j2pj"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4e1c6"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xaaei"]
+bg_color = Color(0.129412, 0.14902, 0.180392, 0)
+
+[node name="WFCEditor" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.2
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -5.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="btn_New" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Create New"
+
+[node name="dlg_New" type="FileDialog" parent="VBoxContainer/HBoxContainer/btn_New"]
+title = "Open a File"
+initial_position = 4
+size = Vector2i(640, 480)
+ok_button_text = "Open"
+file_mode = 0
+filters = PackedStringArray("*.tres")
+
+[node name="btn_Import" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Import"
+
+[node name="dlg_ImportTileset" type="FileDialog" parent="VBoxContainer/HBoxContainer/btn_Import"]
+title = "Open a File"
+initial_position = 4
+size = Vector2i(640, 480)
+ok_button_text = "Open"
+file_mode = 0
+filters = PackedStringArray("*.tres")
+
+[node name="dlg_ImportRules" type="FileDialog" parent="VBoxContainer/HBoxContainer/btn_Import"]
+title = "Open a File"
+initial_position = 4
+size = Vector2i(640, 480)
+ok_button_text = "Open"
+file_mode = 0
+filters = PackedStringArray("*.json")
+
+[node name="pnl_TileSelection" type="Panel" parent="VBoxContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="ScrollContainer" parent="VBoxContainer/pnl_TileSelection"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="ItemList" type="ItemList" parent="VBoxContainer/pnl_TileSelection/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+allow_reselect = true
+fixed_icon_size = Vector2i(32, 32)
+script = ExtResource("1_y7kpu")
+
+[node name="hBox_Freq" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/hBox_Freq"]
+layout_mode = 2
+text = "Frequency"
+
+[node name="SpinBox" type="SpinBox" parent="VBoxContainer/hBox_Freq"]
+layout_mode = 2
+size_flags_horizontal = 3
+rounded = true
+allow_greater = true
+alignment = 2
+
+[node name="Button" type="Button" parent="VBoxContainer/hBox_Freq"]
+layout_mode = 2
+text = "Apply"
+
+[node name="btn_Export" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Export Rules"
+
+[node name="dlg_Export" type="FileDialog" parent="VBoxContainer/btn_Export"]
+initial_position = 4
+size = Vector2i(640, 480)
+ok_button_text = "Save"
+filters = PackedStringArray("*.json")
+
+[node name="pnl_Contents" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3lwhi")
+metadata/_edit_use_anchors_ = true
+
+[node name="Panel" type="Panel" parent="pnl_Contents"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.33
+anchor_top = 0.33
+anchor_right = 0.67
+anchor_bottom = 0.67
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 3.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_eckdh")
+metadata/_edit_use_anchors_ = true
+
+[node name="margin_Contents" type="MarginContainer" parent="pnl_Contents"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="grid_main" type="GridContainer" parent="pnl_Contents/margin_Contents"]
+layout_mode = 2
+columns = 3
+
+[node name="tl" type="Panel" parent="pnl_Contents/margin_Contents/grid_main"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_yqc60")
+
+[node name="upTilesScroll" type="ScrollContainer" parent="pnl_Contents/margin_Contents/grid_main"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_sadsu")
+horizontal_scroll_mode = 0
+
+[node name="tc" type="FlowContainer" parent="pnl_Contents/margin_Contents/grid_main/upTilesScroll"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="tr" type="Panel" parent="pnl_Contents/margin_Contents/grid_main"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_4j2pj")
+
+[node name="leftTilesScroll" type="ScrollContainer" parent="pnl_Contents/margin_Contents/grid_main"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_sadsu")
+horizontal_scroll_mode = 0
+
+[node name="cl" type="FlowContainer" parent="pnl_Contents/margin_Contents/grid_main/leftTilesScroll"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="grid_centerButtons" type="GridContainer" parent="pnl_Contents/margin_Contents/grid_main"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 3
+
+[node name="pad_uL" type="TextureRect" parent="pnl_Contents/margin_Contents/grid_main/grid_centerButtons"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+expand_mode = 2
+
+[node name="upTile" type="TextureRect" parent="pnl_Contents/margin_Contents/grid_main/grid_centerButtons"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("1_ebf7i")
+expand_mode = 1
+
+[node name="pad_uR" type="TextureRect" parent="pnl_Contents/margin_Contents/grid_main/grid_centerButtons"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+expand_mode = 2
+
+[node name="leftTile" type="TextureRect" parent="pnl_Contents/margin_Contents/grid_main/grid_centerButtons"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("2_g1fe2")
+expand_mode = 1
+
+[node name="selectedTile" type="TextureRect" parent="pnl_Contents/margin_Contents/grid_main/grid_centerButtons"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+expand_mode = 2
+
+[node name="rightTile" type="TextureRect" parent="pnl_Contents/margin_Contents/grid_main/grid_centerButtons"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("3_m4u2y")
+expand_mode = 1
+
+[node name="pad_bL" type="TextureRect" parent="pnl_Contents/margin_Contents/grid_main/grid_centerButtons"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+expand_mode = 2
+
+[node name="downTile" type="TextureRect" parent="pnl_Contents/margin_Contents/grid_main/grid_centerButtons"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("4_yhd7u")
+expand_mode = 1
+
+[node name="pad_bR" type="TextureRect" parent="pnl_Contents/margin_Contents/grid_main/grid_centerButtons"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+expand_mode = 2
+
+[node name="rightTilesScroll" type="ScrollContainer" parent="pnl_Contents/margin_Contents/grid_main"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_sadsu")
+horizontal_scroll_mode = 0
+
+[node name="cr" type="FlowContainer" parent="pnl_Contents/margin_Contents/grid_main/rightTilesScroll"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="bl" type="Panel" parent="pnl_Contents/margin_Contents/grid_main"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_4e1c6")
+
+[node name="downTilesScroll" type="ScrollContainer" parent="pnl_Contents/margin_Contents/grid_main"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_sadsu")
+horizontal_scroll_mode = 0
+
+[node name="bc" type="FlowContainer" parent="pnl_Contents/margin_Contents/grid_main/downTilesScroll"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="br" type="Panel" parent="pnl_Contents/margin_Contents/grid_main"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_xaaei")

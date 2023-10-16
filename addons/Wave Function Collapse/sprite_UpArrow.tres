@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://dr3ccdo6p0v0y"]
+
+[ext_resource type="Texture2D" uid="uid://cundsvvnxhmv8" path="res://addons/WFCEditor/arrows.png" id="1_k06ks"]
+
+[resource]
+atlas = ExtResource("1_k06ks")
+region = Rect2(32, 0, 32, 32)

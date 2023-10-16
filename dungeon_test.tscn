@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://htrdcavfxb5w"]
+
+[ext_resource type="TileSet" uid="uid://bex1cdurhd5n4" path="res://tileset_Dungeon.tres" id="1_1lmny"]
+[ext_resource type="Script" path="res://Scripts/Test.cs" id="2_8yda5"]
+
+[node name="Node2D" type="TileMap"]
+tile_set = ExtResource("1_1lmny")
+format = 2
+script = ExtResource("2_8yda5")
+width = 25
+height = 25
+rulePath = "res://dungeonRules.json"
+wrap = true

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://bc2u6etcjnwla"]
+
+[ext_resource type="TileSet" uid="uid://vxkgkyx4tvqm" path="res://tileset_Prototype.tres" id="1_txvwg"]
+[ext_resource type="Script" path="res://Scripts/Test.cs" id="2_b56ob"]
+
+[node name="Node2D" type="TileMap"]
+tile_set = ExtResource("1_txvwg")
+format = 2
+script = ExtResource("2_b56ob")
+width = 25
+height = 25
+rulePath = "res://testRules2.json"
+wrap = true
