@@ -7,7 +7,7 @@
 tile_set = ExtResource("1_txvwg")
 format = 2
 script = ExtResource("2_b56ob")
-width = 25
-height = 25
-rulePath = "res://testRules2.json"
+width = 35
+height = 35
+rulePath = "res://proto_rules.json"
 wrap = true

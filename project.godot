@@ -41,4 +41,4 @@ Generate={
 
 [rendering]
 
-environment/defaults/default_clear_color=Color(0.247059, 0.027451, 0.345098, 1)
+environment/defaults/default_clear_color=Color(0.113725, 0.113725, 0.113725, 1)
