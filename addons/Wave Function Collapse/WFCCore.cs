@@ -16,7 +16,6 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 DEALINGS IN THE SOFTWARE.
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
-using System.Diagnostics;
 
 namespace hamsterbyte.WFC{
     /*/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,6 +31,7 @@ namespace hamsterbyte.WFC{
     using System.Linq;
     using System.Text;
     using System.Text.Json;
+    using System.Diagnostics;
 
     /*/////////////////////////////////////////////////////////////////////////////////////////////////////////////
     DELEGATES => REQUIRED DELEGATES FOR CORE FUNCTIONALITY
@@ -68,8 +68,57 @@ namespace hamsterbyte.WFC{
             entropyNoise = WFCGrid.Random.NextDouble() * .0001;
             PrecalculateFrequencies();
         }
-        
-        
+    }
+
+    public partial class WFCCell{
+        private void PrecalculateFrequencies(){
+            for (int i = 0; i < rawFrequencies.Length; i++){
+                logFrequencies[i] = Math.Log2(rawFrequencies[i]);
+            }
+
+            sumOfRawFrequencies = rawFrequencies.Sum();
+            sumOfPossibleFrequencies = sumOfRawFrequencies;
+            for (int i = 0; i < rawFrequencies.Length; i++){
+                sumOfPossibleFrequencyLogFrequencies += Math.Log2(sumOfRawFrequencies) * Math.Log2(rawFrequencies[i]);
+            }
+        }
+
+        public void RemoveOption(int i){
+            Options[i] = false;
+            sumOfPossibleFrequencies -= rawFrequencies[i];
+            sumOfPossibleFrequencyLogFrequencies -= logFrequencies[i];
+        }
+
+        public double Entropy => Math.Log2(sumOfPossibleFrequencies) -
+            sumOfPossibleFrequencyLogFrequencies / sumOfPossibleFrequencies + entropyNoise;
+
+
+        private int WeightedRandomIndex(){
+            int pointer = 0;
+            int randomFromSumPossible = WFCGrid.Random.Next(0, sumOfPossibleFrequencies);
+            for (int i = 0; i < Options.Length; i++){
+                if (!Options[i]) continue;
+                pointer += rawFrequencies[i];
+                if (pointer >= randomFromSumPossible){
+                    return i;
+                }
+            }
+
+            //If index returns -1 we know the collapse has failed.
+            return -1;
+        }
+
+
+        public int Collapse(){
+            int weightedRandomIndex = WeightedRandomIndex();
+            TileIndex = weightedRandomIndex;
+            Collapsed = true;
+            for (int i = 0; i < Options.Length; i++){
+                Options[i] = i == TileIndex;
+            }
+
+            return weightedRandomIndex;
+        }
     }
 
     /*/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +127,7 @@ namespace hamsterbyte.WFC{
     MODIFIED WITHOUT A SOLID UNDERSTANDING OF HOW THIS SYSTEM WORKS.
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
-     sealed partial class WFCGrid{
+    sealed partial class WFCGrid{
         #region VARIABLES
 
         public bool Busy;
@@ -193,6 +242,98 @@ namespace hamsterbyte.WFC{
             Busy = false;
             currentAttempt = _resetAttempts ? 0 : currentAttempt;
             AnimationCoordinates.Clear();
+        }
+    }
+
+    public partial class WFCGrid{
+        private EntropyCoordinates Observe(){
+            while (!entropyHeap.IsEmpty){
+                EntropyCoordinates coords = entropyHeap.Pop();
+                if (!cells[coords.Coordinates.X, coords.Coordinates.Y].Collapsed) return coords;
+            }
+
+            return EntropyCoordinates.Invalid;
+        }
+
+        private void Collapse(Coordinates _coords){
+            int collapsedIndex = cells[_coords.X, _coords.Y].Collapse();
+            AnimationCoordinates.Enqueue(_coords);
+            removalUpdates.Push(new RemovalUpdate(){
+                Coordinates = _coords,
+                TileIndex = collapsedIndex
+            });
+            remainingUncollapsedCells--;
+        }
+
+        private void Propagate(bool _wrap = true){
+            while (removalUpdates.Count > 0){
+                RemovalUpdate update = removalUpdates.Pop();
+                if (update.TileIndex == -1){
+                    validCollapse = false;
+                    return;
+                }
+
+                Coordinates[] cardinals = Coordinates.Cardinals;
+                for (int d = 0; d < adjacencyRules.GetLength(1); d++){
+                    Coordinates current = cardinals[d] + update.Coordinates;
+                    if (_wrap){
+                        current = current.Wrap(Width, Height);
+                    }
+                    else if (!IsInBounds(current)){
+                        continue;
+                    }
+
+                    WFCCell currentCell = cells[current.X, current.Y];
+                    if (currentCell.Collapsed) continue;
+                    for (int o = 0; o < adjacencyRules.GetLength(2); o++){
+                        if (adjacencyRules[update.TileIndex, d, o] == 0 && currentCell.Options[o]){
+                            currentCell.RemoveOption(o);
+                        }
+                    }
+
+                    entropyHeap.Push(new EntropyCoordinates(){
+                        Coordinates = currentCell.Coordinates,
+                        Entropy = currentCell.Entropy
+                    });
+                }
+            }
+        }
+
+        public void TryCollapse(bool _wrap = true, int _maxAttempts = 100){
+            Reset(true);
+            Busy = true;
+            Stopwatch timer = Stopwatch.StartNew();
+            for (int i = 0; i < _maxAttempts; i++){
+                currentAttempt++;
+                WFCCell cell = cells.Random();
+                entropyHeap.Push(new EntropyCoordinates(){
+                    Coordinates = cell.Coordinates,
+                    Entropy = cell.Entropy
+                });
+
+                while (remainingUncollapsedCells > 0 && validCollapse){
+                    EntropyCoordinates e = Observe();
+                    Collapse(e.Coordinates);
+                    Propagate(_wrap);
+                }
+
+                if (!validCollapse && i < _maxAttempts - 1){
+                    Reset();
+                }
+                else{
+                    break;
+                }
+            }
+
+            timer.Stop();
+            WFCResult result = new(){
+                Grid = this,
+                Success = validCollapse,
+                Attempts = currentAttempt,
+                ElapsedMilliseconds = timer.ElapsedMilliseconds
+            };
+            onComplete?.Invoke(result);
+            Busy = false;
         }
     }
 
